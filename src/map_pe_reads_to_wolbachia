@@ -2,12 +2,12 @@
 
 set -eu
 
+samtools=bin/samtools/samtools
+
 outdir="output/pe_mapping"
 if [[ ! -e "${outdir}" ]]; then
     mkdir -p "${outdir}"
 fi
-
-samtools=bin/samtools/samtools
 
 main_genome="output/genomes/wolbachia_all.fasta"
 my_main_genome="${outdir}/ref.fasta"
@@ -17,7 +17,6 @@ my_alt_idx="${outdir}/ref.fasta.alt"
 pe_reads="data/pe_merged.fastq.gz"
 bwa_log="${outdir}/bwamem.log"
 samtools_log="${outdir}/samtools.log"
-unsorted_sam="${outdir}/pe_mapped_unsorted.sam"
 mapped_reads_only="${outdir}/pe_mapped_filtered.bam"
 output_bam="${outdir}/pe_mapped.bam"
 
@@ -29,7 +28,7 @@ bwa index "${my_main_genome}"
 printf "[ %s: Running bwa mem ]\n" "$(date)"
 printf "[ %s: Filtering mapping results ]\n" "$(date)"
 bwa mem \
-    -t 100 \
+    -t 50 \
     -p \
     "${my_main_genome}" \
     "${pe_reads}" \
