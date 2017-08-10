@@ -2,7 +2,10 @@
 
 set -eu
 
-samtools=bin/samtools/samtools
+# use the right samtools
+samtools_path="$(readlink -f bin/samtools)"
+export PATH="${samtools_path}:${PATH}"
+
 mapped_pe_reads="output/pe_mapping/pe_mapped.bam"
 
 outdir="output/pe_mapping/mapped_reads"
@@ -13,9 +16,8 @@ fi
 singletons="${outdir}/singletons.fastq"
 
 # mapped SAM statistics (and mapped raw reads)
-"${samtools}" view -h -F 12 ${mapped_pe_reads} \
-    | bin/bbmap/pileup.sh \
-        in=stdin.sam \
+bin/bbmap/pileup.sh \
+        "in=${mapped_pe_reads}" \
         out=stdout.sam \
         "hist=${outdir}/hist.txt" \
         "basecov=${outdir}/basecov.txt" \
