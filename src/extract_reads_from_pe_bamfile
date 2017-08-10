@@ -6,7 +6,7 @@ set -eu
 samtools_path="$(readlink -f bin/samtools)"
 export PATH="${samtools_path}:${PATH}"
 
-mapped_pe_reads="output/pe_mapping/pe_mapped.bam"
+bamfile="output/pe_mapping/pe_mapped.bam"
 
 outdir="output/pe_mapping/mapped_reads"
 if [[ ! -e "${outdir}" ]]; then
@@ -17,30 +17,29 @@ singletons="${outdir}/singletons.fastq"
 
 # mapped SAM statistics (and mapped raw reads)
 bin/bbmap/pileup.sh \
-        "in=${mapped_pe_reads}" \
-        out=stdout.sam \
+        "in=${bamfile}" \
         "hist=${outdir}/hist.txt" \
         "basecov=${outdir}/basecov.txt" \
-        "bincov=${outdir}/bincov.txt" \
-    | bin/bbmap/reformat.sh \
-        in=stdin.sam \
-        out=stdout.fastq \
-        mappedonly=t \
-        pairedonly=t \
-        "bhist=${outdir}/bhist_mapped.txt" \
-        "qhist=${outdir}/qhist_mapped.txt" \
-        "qchist=${outdir}/qchist_mapped.txt" \
-        "aqhist=${outdir}/aqhist_mapped.txt" \
-        "bqhist=${outdir}/bqhist_mapped.txt" \
-        "lhist=${outdir}/lhist_mapped.txt" \
-        "gchist=${outdir}/gchist_mapped.txt" \
-        gcbins=auto \
-        "ehist=${outdir}/ehist_mapped.txt" \
-        "qahist=${outdir}/qahist_mapped.txt" \
-        "indelhist=${outdir}/indelhist_mapped.txt" \
-        "mhist=${outdir}/mhist_mapped.txt" \
-        "idhist=${outdir}/idhist_mapped.txt" \
-        idbins=auto \
+        "bincov=${outdir}/bincov.txt"
+bin/bbmap/reformat.sh \
+    "in=${bamfile}" \
+    out=stdout.fastq \
+    mappedonly=t \
+    pairedonly=t \
+    "bhist=${outdir}/bhist_mapped.txt" \
+    "qhist=${outdir}/qhist_mapped.txt" \
+    "qchist=${outdir}/qchist_mapped.txt" \
+    "aqhist=${outdir}/aqhist_mapped.txt" \
+    "bqhist=${outdir}/bqhist_mapped.txt" \
+    "lhist=${outdir}/lhist_mapped.txt" \
+    "gchist=${outdir}/gchist_mapped.txt" \
+    gcbins=auto \
+    "ehist=${outdir}/ehist_mapped.txt" \
+    "qahist=${outdir}/qahist_mapped.txt" \
+    "indelhist=${outdir}/indelhist_mapped.txt" \
+    "mhist=${outdir}/mhist_mapped.txt" \
+    "idhist=${outdir}/idhist_mapped.txt" \
+    idbins=auto \
     | bin/bbmap/repair.sh \
         in=stdin.fastq \
         repair=t \
